@@ -1,0 +1,47 @@
+{
+  "meta": { "version": "PTDL_v2", "update_url": null },
+  "uuid": "b9b5e5dc-8c2c-4e4f-9b2d-5c6f9d6b1234",
+  "author": "Shmitz@nonyabusiness.io",
+  "exported_at": "2025-11-07T02:15:00+00:00",
+  "name": "GitHub Actions Runner",
+  "description": "GitHub Actions runner v2.329.0 (non-root runtime).",
+  "features": null,
+  "docker_images": {
+    "ubuntu_runner_22": "ghcr.io/shmitzas/gh-actions-runner-base:22.04"
+  },
+  "file_denylist": [],
+  "startup": "su -s /bin/bash container -c 'cd /home/container/actions-runner && [ ! -f .runner ] && ./config.sh --unattended --url \"$REPO_URL\" --token \"$REG_TOKEN\" --work _work --replace || true && exec bash run.sh'",
+  "config": {
+    "files": "{}",
+    "startup": "{\"done\":\"Listening for Jobs\"}",
+    "logs": "{\"custom\":[]}",
+    "stop": "pkill -INT -f actions-runner/run.sh || true"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\nset -euo pipefail\necho \"[install] start\"; [ -z \"${REPO_URL:-}\" ] && echo \"REPO_URL required\" && exit 1; [ -z \"${REG_TOKEN:-}\" ] && echo \"REG_TOKEN required\" && exit 1; RV=2.329.0; SH=194f1e1e4bd02f80b7e9633fc546084d8d4e19f3928a324d512ea53430102e1d; mkdir -p /mnt/server/actions-runner; cd /mnt/server/actions-runner; echo \"[install] downloading\"; curl -fsSL -o runner.tar.gz -L https://github.com/actions/runner/releases/download/v${RV}/actions-runner-linux-x64-${RV}.tar.gz; echo \"[install] verifying\"; echo \"${SH}  runner.tar.gz\" | sha256sum -c -; echo \"[install] extracting\"; tar xzf runner.tar.gz; echo \"[install] chown\"; chown -R container:container /mnt/server/actions-runner; echo \"[install] done\"",
+      "container": "ghcr.io/shmitzas/gh-actions-runner-base:22.04",
+      "entrypoint": "/bin/bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Repository URL",
+      "description": "GitHub repo URL",
+      "env_variable": "REPO_URL",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string"
+    },
+    {
+      "name": "Registration Token",
+      "description": "GitHub registration token",
+      "env_variable": "REG_TOKEN",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string"
+    }
+  ]
+}

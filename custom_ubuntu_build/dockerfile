@@ -1,0 +1,18 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive RUNNER_ALLOW_RUNASROOT=1
+
+# Create group id 998 and user id 1000
+RUN groupadd -g 998 container || true \
+ && useradd -m -u 1000 -g 998 container || true
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates curl tar git jq unzip xz-utils \
+    libicu70 libssl3 libkrb5-3 zlib1g libstdc++6 libgcc-s1 liblzma5 \
+    liblttng-ust1 libcurl4 libunwind8 libuuid1 \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /home/container && chown -R container:container /home/container
+WORKDIR /home/container
+# NOTE: keep root so install script can run.
+# USER container   (removed)
