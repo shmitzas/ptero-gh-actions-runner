@@ -14,7 +14,7 @@ If you need to modify something, make sure to re-build and re-publish the image 
         ```
 2. Build the image
     ```bash
-    docker build -f Dockerfile.runner-base -t ghcr.io/<gh username>/gh-actions-runner-base:22.04 .
+    docker build -f dockerfile -t ghcr.io/<gh username>/gh-actions-runner-base:22.04 .
     ```
 3. Publish the build
      ```bash
